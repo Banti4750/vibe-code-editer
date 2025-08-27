@@ -59,11 +59,10 @@ const lucideIconMap: Record<string, LucideIcon> = {
 
 export function DashboardSidebar({ initialPlaygroundData }: { initialPlaygroundData: PlaygroundData[] }) {
     const pathname = usePathname()
-    const safePlaygroundData = initialPlaygroundData ?? []
     const [starredPlaygrounds, setStarredPlaygrounds] = useState(
-        safePlaygroundData.filter((p) => p.starred)
+        initialPlaygroundData.filter((p) => p.starred)
     )
-    const [recentPlaygrounds, setRecentPlaygrounds] = useState(safePlaygroundData)
+    const [recentPlaygrounds, setRecentPlaygrounds] = useState(initialPlaygroundData)
 
     return (
         <Sidebar variant="inset" collapsible="icon" className="border-1 border-r">
