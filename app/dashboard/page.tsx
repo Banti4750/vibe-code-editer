@@ -1,5 +1,7 @@
+import { deleteProjectById, duplicateProjectById, editProjectById, getAllPlaygroundForUser } from "@/features/dashboard/actions";
 import AddNewButton from "@/features/dashboard/components/add-button";
 import AddRepo from "@/features/dashboard/components/add-repo";
+import ProjectTable from "@/features/dashboard/components/project-table";
 
 // import ProjectTable from "@/features/dashboard/components/project-table";
 // import { getAllPlaygroundForUser , deleteProjectById ,editProjectById , duplicateProjectById} from "@/features/playground/actions";
@@ -13,7 +15,7 @@ const EmptyState = () => (
 );
 
 const DashboardMainPage = async () => {
-    const playgrounds: any[] = []
+    const playgrounds = await getAllPlaygroundForUser();
     // console.log(playgrounds);
     return (
         <div className="flex flex-col justify-start items-center min-h-screen mx-auto max-w-7xl px-4 py-10">
@@ -25,15 +27,15 @@ const DashboardMainPage = async () => {
                 {playgrounds && playgrounds.length === 0 ? (
                     <EmptyState />
                 ) : (
-                    // @ts - ignore
-                    //             < ProjectTable
-                    //               projects={playgrounds || []}
-                    //         onDeleteProject={deleteProjectById}
-                    //         onUpdateProject={editProjectById}
-                    //         onDuplicateProject={duplicateProjectById}
-                    //   />
+                    < ProjectTable
+                        //@ts-ignore
+                        projects={playgrounds || []}
+                        onDeleteProject={deleteProjectById}
+                        onUpdateProject={editProjectById}
+                        onDuplicateProject={duplicateProjectById}
+                    />
 
-                    <p>add playground</p>
+
                 )}
             </div>
         </div>
