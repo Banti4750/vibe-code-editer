@@ -1,12 +1,12 @@
 "use client";
-// import TemplateSelectionModal from "@/components/modal/template-selector-modal";
 import { Button } from "@/components/ui/button"
-// import { createPlayground } from "@/features/playground/actions";
 import { Plus } from 'lucide-react'
 import Image from "next/image"
 import { useRouter } from "next/navigation";
 import { useState } from "react"
 import { toast } from "sonner";
+import TemplateSelectionModal from "./template-selector-modal";
+import { createPlayground } from "../actions";
 
 const AddNewButton = () => {
     const [isModalOpen, setIsModalOpen] = useState(false)
@@ -23,7 +23,7 @@ const AddNewButton = () => {
         description?: string;
     }) => {
         setSelectedTemplate(data)
-        // const res = await createPlayground(data);
+        const res = await createPlayground(data);
         toast("Playground created successfully");
         // Here you would typically handle the creation of a new playground
         // with the selected template data
@@ -67,11 +67,11 @@ const AddNewButton = () => {
                 </div>
             </div>
 
-            {/* <TemplateSelectionModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSubmit={handleSubmit}
-      /> */}
+            <TemplateSelectionModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onSubmit={handleSubmit}
+            />
         </>
     )
 }

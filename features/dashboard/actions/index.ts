@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 import { Templates } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
-export const createPalyground = async (data: {
+export const createPlayground = async (data: {
     title: string;
     template: Templates;
     description: string;
