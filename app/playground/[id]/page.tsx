@@ -34,13 +34,15 @@ import {
     ResizablePanelGroup,
 } from "@/components/ui/resizable";
 
-
 import { Bot, } from 'lucide-react';
 import { useParams } from 'next/navigation'
 import React, { useState } from 'react'
 import { Separator } from '@radix-ui/react-dropdown-menu';
 import type { TemplateFile } from "@/features/playground/libs/path-to-json";
 import { PlaygroundEditor } from '@/features/playground/components/playground-editor';
+import { useWebContainer } from '@/features/webcontainers/hooks/useWebContainer';
+import WebContainerPreview from '@/features/webcontainers/components/webcontainer-preveiw';
+import LoadingStep from '@/components/ui/loader';
 
 
 const Page = () => {
@@ -68,6 +70,15 @@ const Page = () => {
         setOpenFiles,
     } = useFileExplorer();
 
+    const {
+        serverUrl,
+        isLoading: containerLoading,
+        error: containerError,
+        instance,
+        writeFileSync,
+        // @ts-ignore
+    } = useWebContainer({ templateData });
+
     React.useEffect(() => {
         setPlaygroundId(id);
     }, [id, setPlaygroundId]);
@@ -83,6 +94,48 @@ const Page = () => {
     const handleFileSelect = (file: TemplateFile) => {
         openFile(file);
     };
+
+    // Error state
+    if (error) {
+        return (
+            <div className="flex flex-col items-center justify-center h-[calc(100vh-4rem)] p-4">
+                <AlertCircle className="h-12 w-12 text-red-500 mb-4" />
+                <h2 className="text-xl font-semibold text-red-600 mb-2">
+                    Something went wrong
+                </h2>
+                <p className="text-gray-600 mb-4">{error}</p>
+                <Button onClick={() => window.location.reload()} variant="destructive">
+                    Try Again
+                </Button>
+            </div>
+        );
+    }
+
+    // Loading state
+    if (isLoading) {
+        return (
+            <div className="flex flex-col items-center justify-center h-[calc(100vh-4rem)] p-4">
+                <div className="w-full max-w-md p-6 rounded-lg shadow-sm border">
+                    <h2 className="text-xl font-semibold mb-6 text-center">
+                        Loading Playground
+                    </h2>
+                    <div className="mb-8">
+                        <LoadingStep
+                            currentStep={1}
+                            step={1}
+                            label="Loading playground data"
+                        />
+                        <LoadingStep
+                            currentStep={2}
+                            step={2}
+                            label="Setting up environment"
+                        />
+                        <LoadingStep currentStep={3} step={3} label="Ready to code" />
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <TooltipProvider>
@@ -194,7 +247,7 @@ const Page = () => {
                     <div className="h-[calc(100vh-4rem)]">
                         {openFiles.length > 0 ? (
                             <div className="h-full flex flex-col">
-                                <div className="border-b bg-muted/30">
+                                <div className="border-b  bg-muted/30">
                                     <Tabs
                                         value={activeFileId || ""}
                                         onValueChange={setActiveFileId}
@@ -228,18 +281,19 @@ const Page = () => {
                                                     </TabsTrigger>
                                                 ))}
                                             </TabsList>
+                                            {openFiles.length > 1 && (
+                                                <Button
+                                                    size="sm"
+                                                    variant="ghost"
+                                                    onClick={closeAllFiles}
+                                                    className="h-6 px-2 text-xs"
+                                                >
+                                                    Close All
+                                                </Button>
+                                            )}
                                         </div>
 
-                                        {openFiles.length > 1 && (
-                                            <Button
-                                                size="sm"
-                                                variant="ghost"
-                                                onClick={closeAllFiles}
-                                                className="h-6 px-2 text-xs"
-                                            >
-                                                Close All
-                                            </Button>
-                                        )}
+
 
                                     </Tabs>
                                 </div>
@@ -271,12 +325,12 @@ const Page = () => {
                                             />
                                         </ResizablePanel>
 
-                                        {/* {isPreviewVisible && (
+                                        {isPreviewVisible && (
                                             <>
                                                 <ResizableHandle />
                                                 <ResizablePanel defaultSize={50}>
                                                     <WebContainerPreview
-                                                        templateData={templateData}
+                                                        templateData={templateData!}
                                                         instance={instance}
                                                         writeFileSync={writeFileSync}
                                                         isLoading={containerLoading}
@@ -286,7 +340,7 @@ const Page = () => {
                                                     />
                                                 </ResizablePanel>
                                             </>
-                                        )} */}
+                                        )}
                                     </ResizablePanelGroup>
                                 </div>
                             </div>
